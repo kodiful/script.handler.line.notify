@@ -1,144 +1,60 @@
 # -*- coding: utf-8 -*-
 
-import urlparse, urllib
-import sys, re
-import xbmc, xbmcgui, xbmcplugin, xbmcaddon
+from __future__ import unicode_literals
 
-from resources.lib.common import log, isholiday
-from resources.lib.history import History
-from resources.lib.phonebook import PhoneBook
-from resources.lib.lookup import Lookup
+import xbmc
+import xbmcgui
+import xbmcplugin
+import xbmcaddon
 
-#-------------------------------------------------------------------------------
-def main():
-    # パラメータ抽出
-    args = urlparse.parse_qs(sys.argv[2][1:])
-    action = args.get('action', None)
-    # アドオン
-    addon = xbmcaddon.Addon()
-    # アドオン設定
-    key = addon.getSetting('key') #str
-    name = addon.getSetting('name')
-    mode = addon.getSetting('mode')
-    addon.setSetting('key','')
-    addon.setSetting('name','')
-    addon.setSetting('mode','create')
+import sys
+import urllib2, urlparse
 
-    if action is None:
-        # 曜日表記
-        w = addon.getLocalizedString(32900).encode('utf-8').split(',')
-        # 履歴
-        phonebook = PhoneBook('phonebook.json')
-        history = History('history.json')
-        length = len(history.data)
-        # 履歴表示
-        for i in range(0,length):
-            # 履歴
-            h = history.data[length-i-1]
-            date1 = h['date'].encode('utf-8')
-            time1 = h['time'].encode('utf-8')
-            weekday = h['weekday']
-            uri1 = h['uri'].encode('utf-8')
-            key1 = h['key'].encode('utf-8')
-            name1 = h['name'].encode('utf-8')
-            datetime = '%s(%s) %s' % (date1, w[weekday], time1)
-            # コンテクストメニュー
-            menu = []
-            if re.compile('^0[0-9]{8,}').search(key1):
-                if phonebook.lookup(key1):
-                    template2 = '[COLOR limegreen]%s[/COLOR]'
-                    action = 'RunPlugin(%s?action=edit&key=%s&name=%s&mode=update)' % (sys.argv[0], urllib.quote_plus(key1), urllib.quote_plus(name1))
-                    menu.append((addon.getLocalizedString(32904), action))
-                else:
-                    template2 = '[COLOR yellow]%s[/COLOR]'
-                    action = 'RunPlugin(%s?action=edit&key=%s&name=%s&mode=append)' % (sys.argv[0], urllib.quote_plus(key1), urllib.quote_plus(name1))
-                    menu.append((addon.getLocalizedString(32903), action))
-            else:
-                key1 = ''
-                template2 = '[COLOR orange]%s[/COLOR]'
-            action = 'Container.Update(%s?action=browse)' % (sys.argv[0])
-            menu.append((addon.getLocalizedString(32907), action))
-            action = 'RunPlugin(%s?action=settings)' % (sys.argv[0])
-            menu.append((addon.getLocalizedString(32902), action))
-            # 書式
-            if isholiday(date1) or weekday == 6:
-                template1 = '[COLOR red]%s[/COLOR]'
-            elif weekday == 5:
-                template1 = '[COLOR blue]%s[/COLOR]'
-            else:
-                template1 = '%s'
-            template3 = '%s'
-            template = '%s  %s  %s' % (template1, template2, template3)
-            title = template % (datetime, name1, key1)
-            li = xbmcgui.ListItem(title, iconImage='DefaultUser.png', thumbnailImage='DefaultUser.png')
-            li.addContextMenuItems(menu, replaceItems=True)
-            # 履歴 - 追加
-            url = ''
-            xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem=li)
+from resources.lib.common import log, notify
 
-        # リストアイテム追加完了
-        xbmcplugin.endOfDirectory(int(sys.argv[1]))
+class Main:
 
-    elif action[0] == 'browse':
-        phonebook = PhoneBook('phonebook.json')
-        items = sorted(phonebook.data.items())
-        for key, name in items:
-            key1 = key.encode('utf-8')
-            name1 = name.encode('utf-8')
-            # 電話帳エントリ - リストアイテム
-            title = '[COLOR white]%s[/COLOR]  [COLOR limegreen]%s[/COLOR]' % (key1, name1)
-            li = xbmcgui.ListItem(title, iconImage='DefaultUser.png', thumbnailImage='DefaultUser.png')
-            # 履歴 - コンテクストメニュー
-            menu = []
-            action = 'RunPlugin(%s?action=edit&key=%s&name=%s&mode=update)' % (sys.argv[0], urllib.quote_plus(key1), urllib.quote_plus(name1))
-            menu.append((addon.getLocalizedString(32905), action))
-            action = 'RunPlugin(%s?action=remove&key=%s&name=%s)' % (sys.argv[0], urllib.quote_plus(key1), urllib.quote_plus(name1))
-            menu.append((addon.getLocalizedString(32906), action))
-            action = 'RunPlugin(%s?action=settings)' % (sys.argv[0])
-            menu.append((addon.getLocalizedString(32902), action))
-            li.addContextMenuItems(menu, replaceItems=True)
-            # リストアイテムを追加
-            url = ''
-            xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem=li)
-        # リストアイテム追加完了
-        xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    def __init__(self):
+        log(2)
 
-    elif action[0] == 'edit':
-        key = args.get('key', None) #str
-        name = args.get('name', None)
-        mode = args.get('mode', None)
-        addon.setSetting('key',key[0])
-        addon.setSetting('name',name[0])
-        addon.setSetting('mode',mode[0])
-        xbmc.executebuiltin('Addon.OpenSettings(%s)' % addon.getAddonInfo('id'))
-        xbmc.executebuiltin('SetFocus(101)') # phonebook category which is the 2nd
-        xbmc.executebuiltin('SetFocus(200)') # key control which is the 1st including hidden controls
+        # アドオン
+        self.addon = xbmcaddon.Addon()
+        # LINE notifyの通知用エンドポイント
+        self.endpoint = 'https://notify-api.line.me/api/notify'
 
-    elif action[0] == 'update':
-        if key and name:
-            PhoneBook('phonebook.json').update(key, name)
-        xbmc.executebuiltin('Container.Refresh()')
+    def main(self):
+        log(3)
+        log(sys.argv)
 
-    elif action[0] == 'remove':
-        key = args.get('key', None)
-        name = args.get('name', None)
-        if key and name:
-            PhoneBook('phonebook.json').remove(key[0], name[0])
-        xbmc.executebuiltin('Container.Refresh()')
+        # パラメータ抽出
+        params = {'action':'','name':'','message':''}
+        args = urlparse.parse_qs(sys.argv[2][1:])
+        for key in params.keys():
+            value = args.get(key, None)
+            if value: params[key] = value[0]
+        # メイン処理
+        if params['action'] is None:
+            # テスト用
+            log('RunPlugin(%s?action=send&messgage=hello,replace)' % (self.addon.getAddonInfo('id')))
+            xbmc.executebuiltin('RunPlugin(%s?action=send&messgage=hello,replace)' % (self.addon.getAddonInfo('id')))
+        elif params['action'] == 'send':
+            # nameに対応するtokenを取得
+            token = 'Z14GaX8dAY4e52gNCy8g3iPc15vMw93NFUOe493LqpZ'
+            # メッセージを送信
+            self.send(token=token, message=params['message'])
 
-    elif action[0] == 'clearCache':
-        PhoneBook('cache.json').clear()
-        xbmc.executebuiltin('Container.Refresh()')
+    def send(self, token, message):
+        headers = {'Authorization': 'Bearer %s' % token}
+        values = {'message': message}
+        postdata = urllib.urlencode(values)
+        req = urllib2.Request(self.endpoint, headers=headers, data=postdata)
+        response = urllib2.urlopen(req)
+        # ステータスコードを確認
+        status = response.getcode()
+        if status == 200:
+            notify('Message has been sent')
+        else:
+            notify('HTTP Error (%d)' % status)
 
-    elif action[0] == 'clearHistory':
-        History('history.json').clear()
-        xbmc.executebuiltin('Container.Refresh()')
-
-    elif action[0] == 'clearSearch':
-        addon.setSetting('search','')
-
-    elif action[0] == 'settings':
-        xbmc.executebuiltin('Addon.OpenSettings(%s)' % addon.getAddonInfo('id'))
-
-#-------------------------------------------------------------------------------
-if __name__  == '__main__': main()
+log(1)
+if __name__  == '__main__': Main().main()
