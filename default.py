@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -43,9 +41,13 @@ if __name__  == '__main__':
     # メイン処理
     if params['action'] is None:
         # テスト用
-        xbmc.executebuiltin('RunPlugin(plugin://%s?action=send&message=hello)' % (ADDON.getAddonInfo('id')))
+        values = {'action': 'send', 'message': 'さようなら'}
+        postdata = urllib.urlencode(values)
+        #xbmc.executebuiltin('RunPlugin(plugin://%s?action=send&message=hello)' % (ADDON.getAddonInfo('id')))
+        xbmc.executebuiltin('RunPlugin(plugin://%s?%s)' % (ADDON.getAddonInfo('id'), postdata))
     elif params['action'] == 'send':
         # nameに対応するtokenを取得
         token = 'Z14GaX8dAY4e52gNCy8g3iPc15vMw93NFUOe493LqpZ'
+        message = 'こんにちは'
         # メッセージを送信
         send_message(token=token, message=params['message'])
