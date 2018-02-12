@@ -6,7 +6,7 @@
       strings 32000 thru 32999 reserved for scripts
       strings 33000 thru 33999 reserved for common strings used in add-ons
   -->
-  <string id="32000">設定</string>
+  <string id="32000">その他</string>
   <string id="32001">デフォルトトークン名</string>
   <string id="32002">表示する履歴数</string>
   <string id="32003">デバッグ</string>

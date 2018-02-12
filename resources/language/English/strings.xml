@@ -6,36 +6,19 @@
       strings 32000 thru 32999 reserved for scripts
       strings 33000 thru 33999 reserved for common strings used in add-ons
   -->
-  <string id="32000">SIP Settings</string>
-  <string id="32001">Port Number</string>
-  <string id="32002">Domain</string>
-  <string id="32003">Realm</string>
-  <string id="32004">Extension Number</string>
-  <string id="32005">User ID</string>
-  <string id="32006">Password</string>
-  <string id="32007">Path to pjsua.py</string>
-  <string id="32200">Phone Book</string>
-  <string id="32201">Number</string>
-  <string id="32202">Name</string>
-  <string id="32203">[COLOR green]Add to phonebook[/COLOR]</string>
-  <string id="32204">[COLOR green]Update phonebook[/COLOR]</string>
-  <string id="32100">Other Settings</string>
-  <string id="32101">Duration</string>
-  <string id="32102">HDMI-CEC</string>
-  <string id="32103">Path to customsearch.py</string>
-  <string id="32104">Debug</string>
-  <string id="32105">[COLOR green]Clear cache[/COLOR]</string>
-  <string id="32106">[COLOR green]Clear history[/COLOR]</string>
-  <string id="32107">[COLOR green]Clear path to customsearch.py[/COLOR]</string>
-  <!--constants-->
-  <string id="32900">Mon,Tue,Wed,Thu,Fri,Sat,Sun</string>
-  <string id="32901">[COLOR orange]Phone Book[/COLOR]</string>
-  <string id="32902">Addon settings</string>
-  <string id="32903">Add to phonebook</string>
-  <string id="32904">Edit phonebook</string>
-  <string id="32905">Edit entry</string>
-  <string id="32906">Delete entry</string>
-  <string id="32907">Open phonebook</string>
-  <string id="32908">Anonymous</string>
-  <string id="32909">Public phone</string>
+  <string id="32000">Others</string>
+  <string id="32001">Default Token Name</string>
+  <string id="32002">History Length</string>
+  <string id="32003">Debug</string>
+  <string id="32100">Token</string>
+  <string id="32101">Token Name</string>
+  <string id="32102">Token</string>
+  <string id="32103">[COLOR green]Add Token[/COLOR]</string>
+  <string id="32200">Send Message</string>
+  <string id="32201">Token Name</string>
+  <string id="32202">Message</string>
+  <string id="32203">[COLOR green]Send[/COLOR]</string>
+  <string id="32900">Addon Settings</string>
+  <string id="32901">%m/%d</string>
+  <string id="32902">Mon,Tue,Wed,Thu,Fri,Sat,Sun</string>
 </strings>
