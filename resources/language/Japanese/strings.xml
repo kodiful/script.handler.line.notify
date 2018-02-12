@@ -6,36 +6,19 @@
       strings 32000 thru 32999 reserved for scripts
       strings 33000 thru 33999 reserved for common strings used in add-ons
   -->
-  <string id="32000">SIP設定</string>
-  <string id="32001">ポート番号</string>
-  <string id="32002">ドメイン</string>
-  <string id="32003">レルム</string>
-  <string id="32004">内線番号</string>
-  <string id="32005">ユーザID</string>
-  <string id="32006">パスワード</string>
-  <string id="32007">pjsua.pyのパス</string>
-  <string id="32200">電話帳</string>
-  <string id="32201">番号</string>
-  <string id="32202">名前</string>
-  <string id="32203">[COLOR green]電話帳に追加する[/COLOR]</string>
-  <string id="32204">[COLOR green]電話帳を更新する[/COLOR]</string>
-  <string id="32100">その他</string>
-  <string id="32101">表示時間</string>
-  <string id="32102">HDMI-CEC</string>
-  <string id="32103">customsearch.pyのパス</string>
-  <string id="32104">デバッグ</string>
-  <string id="32105">[COLOR green]キャッシュをクリアする[/COLOR]</string>
-  <string id="32106">[COLOR green]着信履歴をクリアする[/COLOR]</string>
-  <string id="32107">[COLOR green]customsearch.pyのパスをクリアする[/COLOR]</string>
-  <!--constants-->
-  <string id="32900">月,火,水,木,金,土,日</string>
-  <string id="32901">[COLOR orange]電話帳[/COLOR]</string>
-  <string id="32902">アドオン設定</string>
-  <string id="32903">電話帳に追加する</string>
-  <string id="32904">電話帳を編集する</string>
-  <string id="32905">項目を編集する</string>
-  <string id="32906">項目を削除する</string>
-  <string id="32907">電話帳を開く</string>
-  <string id="32908">非通知</string>
-  <string id="32909">公衆電話</string>
+  <string id="32000">設定</string>
+  <string id="32001">デフォルトトークン名</string>
+  <string id="32002">表示する履歴数</string>
+  <string id="32003">デバッグ</string>
+  <string id="32100">トークン追加</string>
+  <string id="32101">トークン名</string>
+  <string id="32102">トークン</string>
+  <string id="32103">[COLOR green]トークンを追加する[/COLOR]</string>
+  <string id="32200">メッセージ送信</string>
+  <string id="32201">送信先トークン名</string>
+  <string id="32202">メッセージ</string>
+  <string id="32203">[COLOR green]送信[/COLOR]</string>
+  <string id="32900">アドオン設定</string>
+  <string id="32901">%m月%d日</string>
+  <string id="32902">月,火,水,木,金,土,日</string>
 </strings>

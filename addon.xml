@@ -15,6 +15,8 @@
     <summary lang="ja">LINE Notify ラッパー</summary>
     <description lang="en">Send message to LINE Notify</description>
     <description lang="ja">LINE Notifyへメッセージを送信します</description>
+    <disclaimer lang="en">Tested on macOS</disclaimer>
+    <disclaimer lang="ja">macOSでの動作を確認</disclaimer>
     <website>http://kodiful.com/</website>
   </extension>
 </addon>

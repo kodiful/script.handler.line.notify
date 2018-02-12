@@ -6,7 +6,7 @@
       strings 33000 thru 33999 reserved for common strings used in add-ons
   -->
   <category label="32000">
-    <setting label="32001" id="defaultname" type="labelenum" values="test"/>
+    <setting label="32001" id="defaultname" type="labelenum" values="{tokenname}"/>
     <setting label="32002" id="listsize" type="labelenum" values="20|50|100|200|300|500|Unlimited" default="100"/>
     <setting label="32003" id="debug" type="bool" default="false"/>
   </category>
@@ -16,7 +16,7 @@
     <setting label="32103" type="action" option="close" action="RunPlugin(plugin://$ID/?action=addtoken)" enable="!eq(-1,)+!eq(-2,)"/>
   </category>
   <category label="32200">
-    <setting label="32201" id="recipientname" type="labelenum" values="test"/>
+    <setting label="32201" id="recipientname" type="labelenum" values="{tokenname2}"/>
     <setting label="32202" id="message" type="text" default="message"/>
     <setting label="32203" type="action" option="close" action="RunPlugin(plugin://$ID/?action=sendmessage)"/>
   </category>
