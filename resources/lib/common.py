@@ -39,16 +39,15 @@ def formatted_datetime(d, dayfmt, daystr):
     weekdaystr = daystr.split(',')[weekday]
     date1 = d.strftime(dayfmt.encode('utf-8','ignore')).decode('utf-8') + '(' + weekdaystr + ')'
     time1 = d.strftime('%H:%M:%S')
-    if isholiday(d.strftime('%Y-%m-%d')) or weekday == 6:
+    if weekday == 6 or isholiday(d.strftime('%Y-%m-%d')):
         template = '[COLOR red]%s %s[/COLOR]'
     elif weekday == 5:
         template = '[COLOR blue]%s %s[/COLOR]'
     else:
-        template = '%s'
+        template = '%s %s'
     return template % (date1, time1)
 
 def isholiday(day):
-
     holidays = {
         "2014-01-01":True,
         "2014-01-13":True,
@@ -173,8 +172,4 @@ def isholiday(day):
         "2020-11-03":True,
         "2020-11-23":True,
         "2020-12-23":True}
-
-    try:
-        return holidays[day]
-    except:
-        return False
+    return holidays.get(day,False)

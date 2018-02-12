@@ -100,8 +100,11 @@ class Main:
             if value: params[key] = value[0]
         # メイン処理
         if params['action'] is None:
-            # トークン一覧を表示
-            self.show_tokens()
+            if len(self.token.data.keys()) == 1:
+                xbmc.executebuiltin('Container.Update(%s?action=history,replace)' % (sys.argv[0]))            
+            else:
+                # トークン一覧を表示
+                self.show_tokens()
         elif params['action'] == 'history':
             # メッセージの履歴を表示
             name = params['name'] or self.addon.getSetting('defaultname')
