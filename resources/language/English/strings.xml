@@ -10,8 +10,8 @@
   <string id="32001">Default Token Name</string>
   <string id="32002">History Length</string>
   <string id="32003">Debug</string>
-  <string id="32100">Token</string>
-  <string id="32101">Token Name</string>
+  <string id="32100">Token Settings</string>
+  <string id="32101">Name</string>
   <string id="32102">Token</string>
   <string id="32103">[COLOR green]Add Token[/COLOR]</string>
   <string id="32200">Send Message</string>

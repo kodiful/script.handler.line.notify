@@ -14,16 +14,16 @@ from resources.lib.common import log, notify, formatted_datetime
 
 class Token:
 
-    def __init__(self, filepath):
+    def __init__(self, path):
         # ファイル/フォルダのパス
-        self.filepath = filepath
+        self.path = path
         # データ読み込み
         self.read()
 
     def read(self):
-        if os.path.isfile(self.filepath):
+        if os.path.isfile(self.path):
             try:
-                f = open(self.filepath,'r')
+                f = open(self.path,'r')
                 self.data = json.loads(f.read(), 'utf-8')
                 f.close()
             except ValueError:
@@ -33,7 +33,7 @@ class Token:
             self.data = {}
 
     def write(self):
-        f = open(self.filepath,'w')
+        f = open(self.path,'w')
         f.write(json.dumps(self.data, sort_keys=True, ensure_ascii=False, indent=2).encode('utf-8'))
         f.close()
 
@@ -101,7 +101,7 @@ class Main:
         # メイン処理
         if params['action'] is None:
             if len(self.token.data.keys()) == 1:
-                xbmc.executebuiltin('Container.Update(%s?action=history,replace)' % (sys.argv[0]))            
+                xbmc.executebuiltin('Container.Update(%s?action=history,replace)' % (sys.argv[0]))
             else:
                 # トークン一覧を表示
                 self.show_tokens()
@@ -111,8 +111,9 @@ class Main:
             if name: self.show_history(name)
         elif params['action'] == 'message':
             # メッセージの内容を表示
+            name = params['name'] or self.addon.getSetting('defaultname')
             path = params['path']
-            if path: self.show_message(path)
+            if path: self.show_message(name, path)
         elif params['action'] == 'addtoken':
             name = self.addon.getSetting('name')
             token = self.addon.getSetting('token')
@@ -162,21 +163,22 @@ class Main:
         count = 0
         files = sorted(os.listdir(cache_dir), key=lambda message: os.stat(os.path.join(cache_dir,message)).st_mtime, reverse=True)
         for filename in files:
-            filepath = os.path.join(cache_dir, filename)
-            if os.path.isfile(filepath) and not filename.startswith('.'):
+            path = os.path.join(cache_dir, filename)
+            if os.path.isfile(path) and not filename.startswith('.'):
                 if self.listsize == 0 or count < self.listsize:
-                    f = open(filepath, 'r')
+                    f = open(path, 'r')
                     content = f.read()
                     f.close()
                     # 日付文字列
-                    d = datetime.datetime.fromtimestamp(os.stat(filepath).st_mtime)
+                    d = datetime.datetime.fromtimestamp(os.stat(path).st_mtime)
                     dayfmt = self.addon.getLocalizedString(32901)
                     daystr = self.addon.getLocalizedString(32902)
                     fd = formatted_datetime(d, dayfmt, daystr)
                     # リストアイテム
                     label = '%s  %s' % (fd, content.decode('utf-8'))
                     listitem = xbmcgui.ListItem(label, iconImage="DefaultFile.png", thumbnailImage="DefaultFile.png")
-                    query = '%s?action=message&path=%s' % (sys.argv[0],urllib.quote_plus(filepath))
+                    values = {'action':'message', 'name':name, 'path':path}
+                    query = '%s?%s' % (sys.argv[0], urllib.urlencode(values))
                     # コンテクストメニュー
                     menu = []
                     # アドオン設定
@@ -187,16 +189,19 @@ class Main:
                     # カウントアップ
                     count += 1
                 else:
-                    os.remove(filepath)
+                    os.remove(path)
         # end of directory
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
-    def show_message(self, filepath):
+    def show_message(self, name, path):
+        # 表示内容
+        mtime = datetime.datetime.fromtimestamp(os.stat(path).st_mtime).strftime('%Y-%m-%d  %H:%M:%S')
+        content = '[COLOR green]From:[/COLOR] %s\n' % name
+        content += '[COLOR green]Date:[/COLOR] %s\n\n' % mtime
         # ファイル読み込み
-        f = open(filepath,'r')
-        content = f.read()
+        f = open(path,'r')
+        content += f.read()
         f.close()
-        mtime = datetime.datetime.fromtimestamp(os.stat(filepath).st_mtime).strftime('%Y-%m-%d  %H:%M:%S')
         # テキストビューア
         viewer_id = 10147
         # ウィンドウを開く
