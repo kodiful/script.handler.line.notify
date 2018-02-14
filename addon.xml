@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.line.notify.handler"
+<addon id="script.handler.line.notify"
        name="LINE Notify Handler"
        version="1.0"
        provider-name="kodiful">

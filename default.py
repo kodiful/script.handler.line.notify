@@ -228,7 +228,7 @@ class Main:
             else:
                 notify('HTTP Error (%d)' % status)
                 return False
-        except e:
+        except Exception as e:
             notify('Unknown Error (%s)' % str(e))
             return False
 
