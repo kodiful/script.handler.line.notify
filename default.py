@@ -44,7 +44,7 @@ class Token:
             self.data[name] = token
             self.write()
 
-    def remove(self, name=None, token=None):
+    def delete(self, name=None, token=None):
         if isinstance(name, str): name = name.decode('utf-8')
         if isinstance(token, str): token = token.decode('utf-8')
         if name and token and self.data[name] == token:
@@ -100,11 +100,18 @@ class Main:
             if value: params[key] = value[0]
         # メイン処理
         if params['action'] is None:
-            if len(self.token.data.keys()) == 1:
-                xbmc.executebuiltin('Container.Update(%s?action=history,replace)' % (sys.argv[0]))
-            else:
+            startup = self.addon.getSetting('startup')
+            if len(self.token.data.keys()) == 0:
+                self.addon.openSettings()
+            elif startup == "0":
                 # トークン一覧を表示
                 self.show_tokens()
+            else:
+                # デフォルトトークンの送信履歴を表示
+                xbmc.executebuiltin('Container.Update(%s?action=history,replace)' % (sys.argv[0]))
+        elif params['action'] == 'token':
+            # トークン一覧を表示
+            self.show_tokens()
         elif params['action'] == 'history':
             # メッセージの履歴を表示
             name = params['name'] or self.addon.getSetting('defaultname')
@@ -120,13 +127,23 @@ class Main:
             self.token.update(name, token)
             # settings.xmlを更新
             self.update_settings()
+            # トークン一覧を表示
+            xbmc.executebuiltin('Container.Update(%s?action=token,replace)' % (sys.argv[0]))
+        elif params['action'] == 'deletetoken':
+            name = params['name']
+            token = self.token.lookup(name)
+            self.token.delete(name, token)
+            # settings.xmlを更新
+            self.update_settings()
+            # トークン一覧を表示
+            xbmc.executebuiltin('Container.Update(%s?action=token,replace)' % (sys.argv[0]))
         elif params['action'] == 'sendmessage':
             name = self.addon.getSetting('recipientname')
             message = self.addon.getSetting('message')
             # 送信データ
             values = {'action':'send', 'name':name, 'message':message}
             postdata = urllib.urlencode(values)
-            xbmc.executebuiltin('RunPlugin(plugin://%s/?%s)' % (self.addon.getAddonInfo('id'), postdata))
+            xbmc.executebuiltin('RunPlugin(%s?%s)' % (sys.argv[0], postdata))
         elif params['action'] == 'send':
             name = params['name'] or self.addon.getSetting('defaultname')
             token = self.token.lookup(name)
@@ -147,6 +164,8 @@ class Main:
             query = '%s?action=history&name=%s' % (sys.argv[0],urllib.quote_plus(name))
             # コンテクストメニュー
             menu = []
+            # トークン削除
+            menu.append((self.addon.getLocalizedString(32905),'RunPlugin(%s?action=deletetoken&name=%s)' % (sys.argv[0], urllib.quote_plus(name))))
             # アドオン設定
             menu.append((self.addon.getLocalizedString(32900),'Addon.OpenSettings(%s)' % (self.addon.getAddonInfo('id'))))
             # 追加
