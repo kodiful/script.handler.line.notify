@@ -86,8 +86,14 @@ class Main:
         template = f.read()
         f.close()
         settings_file = os.path.join(self.resources_path, 'settings.xml')
+        keys = self.token.data.keys()
+        if len(keys) == 0:
+            namelist = 'n/a'
+        else:
+            namelist = ('|'.join(keys)).decode('utf-8')
+            if len(keys) == 1:
+                self.addon.setSetting('defaultname', keys[0].decode('utf-8'))
         f = open(settings_file,'w')
-        namelist = ('|'.join(self.token.data.keys())).decode('utf-8')
         f.write(template.format(tokenname=namelist,tokenname2=namelist))
         f.close()
 
@@ -98,6 +104,14 @@ class Main:
         for key in params.keys():
             params[key] = value = args.get(key, None)
             if value: params[key] = value[0]
+        # トークンの有無をチェック
+        if params['action'] == 'addtoken':
+            pass
+        elif len(self.token.data.keys()) > 0:
+            pass
+        else:
+            self.addon.openSettings()
+            sys.exit()
         # メイン処理
         if params['action'] is None:
             startup = self.addon.getSetting('startup')
@@ -251,9 +265,4 @@ class Main:
             notify('Unknown Error (%s)' % str(e))
             return False
 
-if __name__  == '__main__':
-    main = Main()
-    if main.addon.getSetting('defaultname'):
-        main.main()
-    else:
-        xbmcaddon.Addon().openSettings()
+if __name__  == '__main__': Main().main()
