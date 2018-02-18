@@ -87,14 +87,10 @@ class Main:
         f.close()
         settings_file = os.path.join(self.resources_path, 'settings.xml')
         keys = self.token.data.keys()
-        if len(keys) == 0:
-            namelist = 'n/a'
-        else:
-            namelist = ('|'.join(keys)).decode('utf-8')
-            if len(keys) == 1:
-                self.addon.setSetting('defaultname', keys[0].decode('utf-8'))
+        namelist = ('|'.join(keys)).decode('utf-8')
+        if len(keys) == 0: namelist = 'n/a'
         f = open(settings_file,'w')
-        f.write(template.format(tokenname=namelist,tokenname2=namelist))
+        f.write(template.format(tokenname=namelist))
         f.close()
 
     def main(self):
@@ -114,27 +110,24 @@ class Main:
             sys.exit()
         # メイン処理
         if params['action'] is None:
-            startup = self.addon.getSetting('startup')
             if len(self.token.data.keys()) == 0:
+                # アドオン設定表示
                 self.addon.openSettings()
-            elif startup == "0":
+            else:
                 # トークン一覧を表示
                 self.show_tokens()
-            else:
-                # デフォルトトークンの送信履歴を表示
-                xbmc.executebuiltin('Container.Update(%s?action=history,replace)' % (sys.argv[0]))
         elif params['action'] == 'token':
             # トークン一覧を表示
             self.show_tokens()
         elif params['action'] == 'history':
             # メッセージの履歴を表示
-            name = params['name'] or self.addon.getSetting('defaultname')
+            name = params['name']
             if name: self.show_history(name)
         elif params['action'] == 'message':
             # メッセージの内容を表示
-            name = params['name'] or self.addon.getSetting('defaultname')
+            name = params['name']
             path = params['path']
-            if path: self.show_message(name, path)
+            if name and path: self.show_message(name, path)
         elif params['action'] == 'addtoken':
             name = self.addon.getSetting('name')
             token = self.addon.getSetting('token')
@@ -159,18 +152,20 @@ class Main:
             postdata = urllib.urlencode(values)
             xbmc.executebuiltin('RunPlugin(%s?%s)' % (sys.argv[0], postdata))
         elif params['action'] == 'send':
-            name = params['name'] or self.addon.getSetting('defaultname')
-            token = self.token.lookup(name)
-            # メッセージを送信
-            if token and self.send(token=token, message=params['message']):
-                # 送信に成功した場合は履歴に格納
-                cache_dir = os.path.join(self.cache_path, name)
-                if not os.path.isdir(cache_dir): os.makedirs(cache_dir)
-                label = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-                path = os.path.join(cache_dir, label)
-                f = open(path, 'w')
-                f.write(params['message'])
-                f.close()
+            name = params['name']
+            if name:
+                # トークン検索
+                token = self.token.lookup(name)
+                # メッセージを送信
+                if token and self.send(token=token, message=params['message']):
+                    # 送信に成功した場合は履歴に格納
+                    cache_dir = os.path.join(self.cache_path, name)
+                    if not os.path.isdir(cache_dir): os.makedirs(cache_dir)
+                    label = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+                    path = os.path.join(cache_dir, label)
+                    f = open(path, 'w')
+                    f.write(params['message'])
+                    f.close()
 
     def show_tokens(self):
         for name in self.token.data.keys():

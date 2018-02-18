@@ -7,10 +7,8 @@
       strings 33000 thru 33999 reserved for common strings used in add-ons
   -->
   <string id="32000">Others</string>
-  <string id="32001">Default Token</string>
   <string id="32002">History Length</string>
   <string id="32003">Debug</string>
-  <string id="32004">Startup</string>
   <string id="32100">Token Settings</string>
   <string id="32101">Name</string>
   <string id="32102">Token</string>
@@ -22,7 +20,5 @@
   <string id="32900">Addon settings</string>
   <string id="32901">%m/%d</string>
   <string id="32902">Mon,Tue,Wed,Thu,Fri,Sat,Sun</string>
-  <string id="32903">Token list</string>
-  <string id="32904">History of default token</string>
   <string id="32905">Delete token</string>
 </strings>
