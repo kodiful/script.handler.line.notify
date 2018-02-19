@@ -151,6 +151,12 @@ class Main:
             values = {'action':'send', 'name':name, 'message':message}
             postdata = urllib.urlencode(values)
             xbmc.executebuiltin('RunPlugin(%s?%s)' % (sys.argv[0], postdata))
+        elif params['action'] == 'prepmessage':
+            self.addon.setSetting('recipientname', params['name'])
+            self.addon.setSetting('message', params['message'])
+            xbmc.executebuiltin('Addon.OpenSettings(%s)' % self.addon.getAddonInfo('id'))
+            xbmc.executebuiltin('SetFocus(101)') # 2nd category
+            xbmc.executebuiltin('SetFocus(201)') # 2nd control
         elif params['action'] == 'send':
             name = params['name']
             if name:
@@ -173,6 +179,8 @@ class Main:
             query = '%s?action=history&name=%s' % (sys.argv[0],urllib.quote_plus(name))
             # コンテクストメニュー
             menu = []
+            # メッセージ送信
+            menu.append((self.addon.getLocalizedString(32904),'RunPlugin(%s?action=prepmessage&name=%s)' % (sys.argv[0], urllib.quote_plus(name))))
             # トークン削除
             menu.append((self.addon.getLocalizedString(32905),'RunPlugin(%s?action=deletetoken&name=%s)' % (sys.argv[0], urllib.quote_plus(name))))
             # アドオン設定
