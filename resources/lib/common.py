@@ -47,7 +47,7 @@ def formatted_datetime(d, dayfmt, daystr):
         template = '%s %s'
     return template % (date1, time1)
 
-ef isholiday(day):
+def isholiday(day):
     holidays = {
         "2014-01-01":True,
         "2014-01-13":True,
@@ -142,6 +142,9 @@ ef isholiday(day):
         "2019-02-11":True, # 建国記念の日
         "2019-03-21":True, # 春分の日
         "2019-04-29":True, # 昭和の日
+        "2019-04-30":True, # 祝日
+        "2019-05-01":True, # 天皇の即位の日
+        "2019-05-02":True, # 祝日
         "2019-05-03":True, # 憲法記念日
         "2019-05-04":True, # みどりの日
         "2019-05-05":True, # こどもの日
